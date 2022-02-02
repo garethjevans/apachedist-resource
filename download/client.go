@@ -187,15 +187,3 @@ func AllVersions(a Artifact) ([]*semver.Version, error) {
 
 	return vs, nil
 }
-
-//func artifactPath(a Artifact) string {
-//	return groupPath(a) + "/" + FileName(a)
-//}
-//
-//func groupPath(a Artifact) string {
-//	parts := append(strings.Split(a.GroupId, "."), a.Id)
-//	if a.Version != "" {
-//		parts = append(parts, a.Version)
-//	}
-//	return strings.Join(parts, "/")
-//}
