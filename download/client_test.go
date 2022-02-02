@@ -104,7 +104,8 @@ func TestAllVersions(t *testing.T) {
 	allVersions, err := AllVersions(a)
 	assert.NoError(t, err)
 	assert.Equal(t, len(allVersions), 45)
-	assert.Equal(t, semver.MustParse("9.0.58"), allVersions[0])
+	assert.Equal(t, semver.MustParse("9.0.1"), allVersions[0])
+	assert.Equal(t, semver.MustParse("9.0.58"), allVersions[44])
 }
 
 func TestDownloadArtifact(t *testing.T) {

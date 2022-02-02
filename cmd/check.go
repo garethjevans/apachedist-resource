@@ -53,12 +53,14 @@ func (i *CheckCmd) Run(cmd *cobra.Command, args []string) {
 		panic(err)
 	}
 
+	Log("got %d versions, filtering...\n", len(versions))
 	var refs []Version
 	for _, version := range versions {
-		if versionToCheck == nil || versionToCheck.LessThan(version) {
+		if versionToCheck == nil || *versionToCheck == *version || versionToCheck.LessThan(version) {
 			refs = append(refs, Version{Ref: version.String()})
 		}
 	}
+	Log("returning %s\n", refs)
 	b, err := json.Marshal(refs)
 	if err != nil {
 		panic(err)

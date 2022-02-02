@@ -183,7 +183,9 @@ func AllVersions(a Artifact) ([]*semver.Version, error) {
 		vs[i] = v
 	}
 
-	sort.Sort(sort.Reverse(semver.Collection(vs)))
+	sort.Sort(semver.Collection(vs))
+
+	//fmt.Println(vs)
 
 	return vs, nil
 }
