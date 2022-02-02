@@ -14,6 +14,8 @@ import (
 	"strings"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Downloader
+
 type Artifact struct {
 	ArtifactId    string
 	Extension     string
@@ -32,7 +34,15 @@ type DownloadedArtifact struct {
 
 var semverRE = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
 
-func GetVersions(repository string) ([]*semver.Version, error) {
+type Downloader interface {
+	GetVersions(repository string) ([]*semver.Version, error)
+	Download(artifactId, version, dest, repo, extension string) (*DownloadedArtifact, error)
+}
+
+type DefaultDownloader struct {
+}
+
+func (d *DefaultDownloader) GetVersions(repository string) ([]*semver.Version, error) {
 	a := Artifact{
 		RepositoryUrl: repository,
 		Downloader:    httpGetCustom,
@@ -46,7 +56,7 @@ func GetVersions(repository string) ([]*semver.Version, error) {
 	return v, nil
 }
 
-func Download(artifactId, version, dest, repo, extension string) (*DownloadedArtifact, error) {
+func (d *DefaultDownloader) Download(artifactId, version, dest, repo, extension string) (*DownloadedArtifact, error) {
 	a := Artifact{
 		ArtifactId:    artifactId,
 		Extension:     extension,
