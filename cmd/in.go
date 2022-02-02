@@ -14,11 +14,14 @@ import (
 )
 
 type InCmd struct {
-	Command *cobra.Command
+	Command    *cobra.Command
+	Downloader download.Downloader
 }
 
 func NewInCmd() InCmd {
-	in := InCmd{}
+	in := InCmd{
+		Downloader: &download.DefaultDownloader{},
+	}
 	in.Command = &cobra.Command{
 		Use:   "in",
 		Short: "concourse in command",
@@ -39,7 +42,7 @@ func (i *InCmd) Run(cmd *cobra.Command, args []string) {
 
 	outputDir := args[0]
 
-	artifact, err := download.Download(jsonIn.Source.ArtifactId, jsonIn.Version.Ref,
+	artifact, err := i.Downloader.Download(jsonIn.Source.ArtifactId, jsonIn.Version.Ref,
 		outputDir, jsonIn.Source.Repository, jsonIn.Source.Extension)
 
 	if err != nil {
