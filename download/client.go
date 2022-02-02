@@ -2,12 +2,15 @@ package download
 
 import (
 	"fmt"
+	"github.com/Masterminds/semver/v3"
 	"github.com/PuerkitoBio/goquery"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -27,7 +30,9 @@ type DownloadedArtifact struct {
 	Sha512   string
 }
 
-func GetVersions(repository string) ([]string, error) {
+var semverRE = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+
+func GetVersions(repository string) ([]*semver.Version, error) {
 	a := Artifact{
 		RepositoryUrl: repository,
 		Downloader:    httpGetCustom,
@@ -143,7 +148,7 @@ func Sha256(a Artifact) string {
 	return strings.Split(string(body), " ")[0]
 }
 
-func AllVersions(a Artifact) ([]string, error) {
+func AllVersions(a Artifact) ([]*semver.Version, error) {
 	// FIXME should ensure that repo url has a trailing slash
 	metadataUrl := a.RepositoryUrl
 	resp, err := a.Downloader(metadataUrl, "", "")
@@ -165,11 +170,22 @@ func AllVersions(a Artifact) ([]string, error) {
 	// Find the review items
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		if strings.HasPrefix(s.Text(), "v") {
-			versions = append(versions, strings.TrimSuffix(strings.TrimPrefix(s.Text(), "v"), "/"))
+			v := strings.TrimSuffix(strings.TrimPrefix(s.Text(), "v"), "/")
+			if semverRE.MatchString(v) {
+				versions = append(versions, v)
+			}
 		}
 	})
 
-	return versions, nil
+	vs := make([]*semver.Version, len(versions))
+	for i, r := range versions {
+		v := semver.MustParse(r)
+		vs[i] = v
+	}
+
+	sort.Sort(sort.Reverse(semver.Collection(vs)))
+
+	return vs, nil
 }
 
 //func artifactPath(a Artifact) string {

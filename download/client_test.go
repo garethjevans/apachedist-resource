@@ -2,6 +2,7 @@ package download
 
 import (
 	"fmt"
+	"github.com/Masterminds/semver/v3"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
@@ -102,7 +103,8 @@ func TestAllVersions(t *testing.T) {
 	}
 	allVersions, err := AllVersions(a)
 	assert.NoError(t, err)
-	assert.Equal(t, len(allVersions), 64)
+	assert.Equal(t, len(allVersions), 45)
+	assert.Equal(t, semver.MustParse("9.0.58"), allVersions[0])
 }
 
 func TestDownloadArtifact(t *testing.T) {

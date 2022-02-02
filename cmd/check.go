@@ -54,16 +54,9 @@ func (i *CheckCmd) Run(cmd *cobra.Command, args []string) {
 	}
 
 	var refs []Version
-	for _, versionString := range versions {
-		if semverRE.MatchString(versionString) {
-			v, err := semver.NewVersion(versionString)
-			if err != nil {
-				log.Fatalf("Should never happen! Error parsing version: %s: %s", versionString, err)
-			}
-
-			if versionToCheck == nil || versionToCheck.LessThan(v) {
-				refs = append(refs, Version{Ref: versionString})
-			}
+	for _, version := range versions {
+		if versionToCheck == nil || versionToCheck.LessThan(version) {
+			refs = append(refs, Version{Ref: version.String()})
 		}
 	}
 	b, err := json.Marshal(refs)
