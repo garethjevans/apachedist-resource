@@ -1,0 +1,10 @@
+{
+  "source": {
+    "repository": "https://archive.apache.org/dist/tomcat/tomcat-9",
+    "extension": "tar.gz",
+    "artifactId": "apache-tomcat"
+  },
+  "version": {
+    "ref": "9.0.55"
+  }
+}

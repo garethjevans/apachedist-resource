@@ -1,2 +1,3 @@
 # apachedist-resource
-a concourse resource to track updates of an apache distribution, e.g. tomcat
+
+a concourse resource that can track information about an apache dist release
