@@ -17,10 +17,9 @@ import (
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Downloader
 
 type Artifact struct {
-	ArtifactId    string
-	Extension     string
 	Version       string
 	RepositoryUrl string
+	UrlPatten     string
 	Downloader    func(string, string, string) (*http.Response, error)
 }
 
@@ -33,10 +32,11 @@ type DownloadedArtifact struct {
 }
 
 var semverRE = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+var semverFinder = regexp.MustCompile(`(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?`)
 
 type Downloader interface {
 	GetVersions(repository string) ([]*semver.Version, error)
-	Download(artifactId, version, dest, repo, extension string) (*DownloadedArtifact, error)
+	Download(version, dest, repo, urlPattern string) (*DownloadedArtifact, error)
 }
 
 type DefaultDownloader struct {
@@ -56,10 +56,9 @@ func (d *DefaultDownloader) GetVersions(repository string) ([]*semver.Version, e
 	return v, nil
 }
 
-func (d *DefaultDownloader) Download(artifactId, version, dest, repo, extension string) (*DownloadedArtifact, error) {
+func (d *DefaultDownloader) Download(version, dest, repo, urlPattern string) (*DownloadedArtifact, error) {
 	a := Artifact{
-		ArtifactId:    artifactId,
-		Extension:     extension,
+		UrlPatten:     urlPattern,
 		Version:       version,
 		RepositoryUrl: repo,
 		Downloader:    httpGetCustom,
@@ -112,12 +111,17 @@ func httpGetCustom(url, user, pwd string) (*http.Response, error) {
 }
 
 func FileName(a Artifact) string {
-	return fmt.Sprintf("%s-%s.%s", a.ArtifactId, a.Version, a.Extension)
+	url := ArtifactUrl(a)
+	parts := strings.Split(url, "/")
+	return parts[len(parts)-1]
 }
 
 func ArtifactUrl(a Artifact) string {
+	// https://archive.apache.org/dist/tomee/tomee-9.0.0-M7/apache-tomee-9.0.0-M7-microprofile.tar.gz
+	// https://archive.apache.org/dist/tomee/tomcat-9/9.0.0-M7/bin/apache-tomcat-9.0.0-M7.tar.gz
 	// FIXME should ensure that repo url has a trailing slash
-	return a.RepositoryUrl + "/v" + a.Version + "/bin/" + FileName(a)
+	path := strings.ReplaceAll(a.UrlPatten, "${version}", a.Version)
+	return a.RepositoryUrl + path
 }
 
 func Sha512(a Artifact) string {
@@ -179,10 +183,15 @@ func AllVersions(a Artifact) ([]*semver.Version, error) {
 	var versions []string
 	// Find the review items
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
-		if strings.HasPrefix(s.Text(), "v") {
-			v := strings.TrimSuffix(strings.TrimPrefix(s.Text(), "v"), "/")
-			if semverRE.MatchString(v) {
-				versions = append(versions, v)
+		if semverFinder.MatchString(s.Text()) {
+			version := semverFinder.FindStringSubmatch(s.Text())[0]
+			// fmt.Println("DEBUG", semverFinder.FindStringSubmatch(s.Text()))
+			// first we check if the version doesn't contain any extra characters removed from the string
+			if strings.HasSuffix(s.Text(), fmt.Sprintf("%s/", version)) {
+				// lets use the strict check
+				if semverRE.MatchString(version) {
+					versions = append(versions, version)
+				}
 			}
 		}
 	})

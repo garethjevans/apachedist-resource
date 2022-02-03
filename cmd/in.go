@@ -42,8 +42,8 @@ func (i *InCmd) Run(cmd *cobra.Command, args []string) {
 
 	outputDir := args[0]
 
-	artifact, err := i.Downloader.Download(jsonIn.Source.ArtifactId, jsonIn.Version.Ref,
-		outputDir, jsonIn.Source.Repository, jsonIn.Source.Extension)
+	artifact, err := i.Downloader.Download(jsonIn.Version.Ref,
+		outputDir, jsonIn.Source.Repository, jsonIn.Source.UrlPattern)
 
 	if err != nil {
 		panic(err)
