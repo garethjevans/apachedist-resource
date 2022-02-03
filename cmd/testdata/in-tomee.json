@@ -1,0 +1,10 @@
+{
+  "source": {
+    "repository": "https://archive.apache.org/dist/tomee",
+    "url_pattern": "/tomee-${version}/apache-tomee-${version}-microprofile.tar.gz",
+    "artifactId": "apache-tomcat"
+  },
+  "version": {
+    "ref": "9.0.0-M7"
+  }
+}

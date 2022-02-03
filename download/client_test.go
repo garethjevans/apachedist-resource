@@ -11,7 +11,85 @@ import (
 	"testing"
 )
 
-func TestAllVersions(t *testing.T) {
+func TestAllVersions_Tomee(t *testing.T) {
+	a := Artifact{
+		RepositoryUrl: "https://archive.apache.org/dist/tomee",
+		Downloader: func(url string, user string, password string) (*http.Response, error) {
+			assert.Equal(t, url, "https://archive.apache.org/dist/tomee")
+
+			r := &http.Response{
+				StatusCode: 200,
+				Body: ioutil.NopCloser(strings.NewReader(`
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /dist/tomee</title>
+ </head>
+ <body>
+<h1>Index of /dist/tomee</h1>
+<pre><img src="/icons/blank.gif" alt="Icon "> <a href="?C=N;O=D">Name</a>                    <a href="?C=M;O=A">Last modified</a>      <a href="?C=S;O=A">Size</a>  <a href="?C=D;O=A">Description</a><hr><img src="/icons/back.gif" alt="[PARENTDIR]"> <a href="/dist/">Parent Directory</a>                             -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.5.2/">tomee-1.5.2/</a>            2013-04-06 10:51    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.6.0.1/">tomee-1.6.0.1/</a>          2014-04-19 19:06    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.6.0.2/">tomee-1.6.0.2/</a>          2020-07-03 04:07    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.6.0/">tomee-1.6.0/</a>            2013-11-20 10:09    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.7.0/">tomee-1.7.0/</a>            2015-02-17 20:04    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.7.1/">tomee-1.7.1/</a>            2015-02-17 20:04    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.7.2/">tomee-1.7.2/</a>            2015-05-22 15:45    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.7.3/">tomee-1.7.3/</a>            2015-12-09 11:30    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.7.4/">tomee-1.7.4/</a>            2017-10-04 10:58    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-1.7.5/">tomee-1.7.5/</a>            2020-07-03 04:08    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.0-M1/">tomee-7.0.0-M1/</a>         2015-12-11 21:02    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.0-M2/">tomee-7.0.0-M2/</a>         2016-03-09 08:33    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.0-M3/">tomee-7.0.0-M3/</a>         2016-03-06 18:12    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.0/">tomee-7.0.0/</a>            2016-05-29 15:49    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.1/">tomee-7.0.1/</a>            2016-06-27 11:01    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.2/">tomee-7.0.2/</a>            2016-11-11 19:04    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.3/">tomee-7.0.3/</a>            2017-10-04 10:58    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.4/">tomee-7.0.4/</a>            2018-05-04 19:50    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.5/">tomee-7.0.5/</a>            2018-07-24 14:21    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.6/">tomee-7.0.6/</a>            2020-07-03 04:06    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.7/">tomee-7.0.7/</a>            2020-07-03 04:04    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.8/">tomee-7.0.8/</a>            2020-07-03 04:03    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.0.9/">tomee-7.0.9/</a>            2020-11-05 18:49    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.1.0/">tomee-7.1.0/</a>            2018-09-07 08:49    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.1.1/">tomee-7.1.1/</a>            2020-07-03 04:05    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.1.2/">tomee-7.1.2/</a>            2020-07-03 04:04    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.1.3/">tomee-7.1.3/</a>            2020-07-03 04:03    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-7.1.4/">tomee-7.1.4/</a>            2020-11-05 18:50    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.0-M1/">tomee-8.0.0-M1/</a>         2020-07-03 04:07    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.0-M2/">tomee-8.0.0-M2/</a>         2020-07-03 04:06    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.0-M3/">tomee-8.0.0-M3/</a>         2020-07-03 04:06    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.0/">tomee-8.0.0/</a>            2020-07-03 04:05    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.1/">tomee-8.0.1/</a>            2020-07-03 04:05    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.2/">tomee-8.0.2/</a>            2020-07-03 04:04    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.3/">tomee-8.0.3/</a>            2020-07-03 04:03    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.4/">tomee-8.0.4/</a>            2020-11-05 18:50    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.5/">tomee-8.0.5/</a>            2020-11-25 00:14    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.6/">tomee-8.0.6/</a>            2021-01-25 16:17    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.7/">tomee-8.0.7/</a>            2021-05-15 03:24    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.8/">tomee-8.0.8/</a>            2021-09-13 08:17    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-8.0.9/">tomee-8.0.9/</a>            2022-01-10 11:43    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-9.0.0-M2/">tomee-9.0.0-M2/</a>         2020-11-05 18:50    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-9.0.0-M3/">tomee-9.0.0-M3/</a>         2020-11-25 00:15    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-9.0.0-M7/">tomee-9.0.0-M7/</a>         2021-05-15 03:25    -   
+<img src="/icons/folder.gif" alt="[DIR]"> <a href="tomee-patch-plugin-0.8/">tomee-patch-plugin-0.8/</a> 2022-01-21 08:31    -   
+<img src="/icons/unknown.gif" alt="[   ]"> <a href="KEYS">KEYS</a>                    2021-09-15 14:28   59K  
+<hr></pre>
+</body></html>
+`)),
+			}
+
+			return r, nil
+		},
+	}
+	allVersions, err := AllVersions(a)
+	assert.NoError(t, err)
+	assert.Equal(t, len(allVersions), 42)
+	assert.Equal(t, semver.MustParse("1.5.2"), allVersions[0])
+	assert.Equal(t, semver.MustParse("9.0.0-M7"), allVersions[41])
+}
+
+func TestAllVersions_Tomcat(t *testing.T) {
 	a := Artifact{
 		RepositoryUrl: "https://archive.apache.org/dist/tomcat/tomcat-9",
 		Downloader: func(url string, user string, password string) (*http.Response, error) {
@@ -110,9 +188,8 @@ func TestAllVersions(t *testing.T) {
 
 func TestDownloadArtifact(t *testing.T) {
 	a := Artifact{
-		ArtifactId:    "bong",
 		Version:       "0.1",
-		Extension:     "zip.gz",
+		UrlPatten:     "/v${version}/bin/bong-${version}.zip.gz",
 		RepositoryUrl: "https://archive.apache.org/dist/tomcat/tomcat-9",
 		Downloader: func(url string, user string, password string) (*http.Response, error) {
 			switch url {

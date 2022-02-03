@@ -4,6 +4,7 @@ type Source struct {
 	ArtifactId string `json:"artifactId"`
 	Extension  string `json:"extension"`
 	Repository string `json:"repository"`
+	UrlPattern string `json:"url_pattern"`
 }
 
 type Version struct {
