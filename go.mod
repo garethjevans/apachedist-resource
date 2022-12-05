@@ -3,7 +3,7 @@ module github.com/garethjevans/apachedist-resource
 go 1.17
 
 require (
-	github.com/Masterminds/semver/v3 v3.1.1
+	github.com/Masterminds/semver/v3 v3.2.0
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0
 	github.com/spf13/cobra v1.6.1
