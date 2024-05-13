@@ -1,4 +1,4 @@
-FROM golang:1.22.2 as go
+FROM golang:1.22.3 as go
 RUN GOPROXY=direct GO111MODULES=on go install github.com/garethjevans/apachedist-resource@main
 
 FROM ubuntu:24.04
