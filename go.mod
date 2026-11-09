@@ -1,9 +1,9 @@
 module github.com/garethjevans/apachedist-resource
 
-go 1.17
+go 1.21
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.1
+	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/PuerkitoBio/goquery v1.9.2
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.8.1
 	github.com/spf13/cobra v1.8.1
